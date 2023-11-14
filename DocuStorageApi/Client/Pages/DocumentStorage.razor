@@ -1,0 +1,104 @@
+﻿@page "/storage"
+@using MudBlazor;
+@using DocuStorageApi.Shared;
+
+<h3>Document Storage</h3>
+
+<MudFileUpload T="IBrowserFile"  FilesChanged="UploadFiles">
+    <ButtonTemplate>
+        <MudButton Class="mt-4 mr-4" Align=" right" HtmlTag="label"
+                   Variant="Variant.Filled"
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                   For="@context">
+            Upload Files
+        </MudButton>
+    </ButtonTemplate>
+</MudFileUpload>
+
+<MudDataGrid Items="@files">
+    <Columns>
+        <PropertyColumn Property="x => x.Id" Title="Id" Format="0" />
+        <PropertyColumn Property="x => x.Name" />
+        <TemplateColumn Title=“Path”> 
+			<CellTemplate>
+                <MudLink Style="color: var(--mud-palette-text-primary)!important" OnClick="@(() => DownloadFile(context.Item))">@context.Item.Path</MudLink>
+            </CellTemplate> 
+		</TemplateColumn>
+        <PropertyColumn Property="x => x.SizeBytes" Title="Size in Bytes" Format="0.0" />
+        <TemplateColumn CellClass="d-flex justify-end">
+            <CellTemplate>
+                <MudStack Row>
+                    <MudIconButton Size="Size.Small"
+                                   Icon="@Icons.Material.Outlined.Delete"
+                                   Variant="Variant.Filled" />
+                </MudStack>
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid> 
+
+
+<script>
+    window.triggerFileDownload = (fileName, url) => {
+        const anchorElement = document.createElement('a');
+        anchorElement.href = url;
+        anchorElement.download = fileName ?? '';
+        anchorElement.click();
+        anchorElement.remove();
+    }
+
+    window.downloadFileFromStream = async (fileName, contentStreamReference) => {
+        const arrayBuffer = await contentStreamReference.arrayBuffer();
+        const blob = new Blob([arrayBuffer]);
+        const url = URL.createObjectURL(blob);
+        const anchorElement = document.createElement('a');
+        anchorElement.href = url;
+        anchorElement.download = fileName ?? '';
+        anchorElement.click();
+        anchorElement.remove();
+        URL.revokeObjectURL(url);
+    }
+</script>
+
+@code {
+
+    [Inject]
+    public HttpClient Http { get; set; } = null!;
+
+    [Inject]
+    public IJSRuntime JS { get; set; } = null;
+
+    private List<FileReference> files;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var allfiles = await Http.GetFromJsonAsync<FileReference[]>("/api/v1/files");
+
+        files = allfiles.ToList();
+    }
+
+    private async Task DownloadFile(FileReference fileReference)
+    {
+        var fileName = fileReference.Name;
+        var fileURL = $"/api/v1/files/{fileReference.Id}";
+        await JS.InvokeVoidAsync("triggerFileDownload", fileName, fileURL);
+    }
+
+    const long KiloByte = 1024;
+    const long MegaByte = KiloByte * KiloByte;
+    const long MaxAllowedSize = 10 * MegaByte;
+
+    private async Task UploadFiles(IBrowserFile file)
+    {
+
+        using var content = new MultipartFormDataContent();
+        using var fileStream = file.OpenReadStream(MaxAllowedSize);
+        using var streamContent = new StreamContent(fileStream);
+        content.Add(streamContent, "file", file.Name);
+        using var response = await Http.PostAsync("/api/v1/files", content);
+
+        StateHasChanged();
+
+    }
+}
+
