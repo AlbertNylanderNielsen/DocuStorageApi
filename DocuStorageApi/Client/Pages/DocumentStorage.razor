@@ -25,13 +25,14 @@
             </CellTemplate> 
 		</TemplateColumn>
         <PropertyColumn Property="x => x.SizeBytes" Title="Size in Bytes" Format="0.0" />
-        <TemplateColumn CellClass="d-flex justify-end">
+        <TemplateColumn >@* CellClass="d-flex justify-end" *@
             <CellTemplate>
-                <MudStack Row>
+                @* <MudStack Row> *@
                     <MudIconButton Size="Size.Small"
+                                   OnClick="() => DeleteFile(context.Item.Id)"
                                    Icon="@Icons.Material.Outlined.Delete"
                                    Variant="Variant.Filled" />
-                </MudStack>
+                @* </MudStack> *@
             </CellTemplate>
         </TemplateColumn>
     </Columns>
@@ -72,10 +73,22 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var allfiles = await Http.GetFromJsonAsync<FileReference[]>("/api/v1/files");
-
-        files = allfiles.ToList();
+        files = await GetAllFiles();
     }
+
+    private async Task<List<FileReference>> GetAllFiles()
+    {
+        var allfiles = await Http.GetFromJsonAsync<FileReference[]>("/api/v1/files");
+        return allfiles!.ToList();
+    }
+   
+    private async Task DeleteFile(int id)
+    {
+
+        await Http.DeleteAsync($"/api/v1/files/{id}");
+
+        files.Remove(files.First(x => x.Id == id)); 
+    }   
 
     private async Task DownloadFile(FileReference fileReference)
     {
@@ -97,7 +110,7 @@
         content.Add(streamContent, "file", file.Name);
         using var response = await Http.PostAsync("/api/v1/files", content);
 
-        StateHasChanged();
+       files = await GetAllFiles();
 
     }
 }

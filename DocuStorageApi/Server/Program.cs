@@ -10,7 +10,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddScoped<FilesDBContext>();
 builder.Services.AddScoped<FileAdapter>();
 builder.Services.AddScoped<FilesGetEndpoint>();
-builder.Services.AddScoped<FileGetEndpoint>();
+builder.Services.AddScoped<FileDeleteEndpoint>();
 builder.Services.AddScoped<FilePostEndpoint>();
 
 
@@ -39,7 +39,7 @@ app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
 FilesGetEndpoint.Map(app);
-FileGetEndpoint.Map(app);
+FileDeleteEndpoint.Map(app);
 FilePostEndpoint.Map(app);
 //app.MapGet("/api/ping", () => Results.Ok("Pong"));
 

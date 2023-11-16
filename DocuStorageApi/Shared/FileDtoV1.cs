@@ -2,7 +2,7 @@
 
 namespace DocuStorageApi.Shared;
 
-public class FileReference
+public class FileDtoV1
 {
     [Key]
     public int Id { get; set; }

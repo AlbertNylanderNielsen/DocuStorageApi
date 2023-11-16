@@ -3,22 +3,22 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DocuStorageApi.Server.Endpoints;
 
-internal record FileGetEndpoint
+internal record FileDeleteEndpoint
 (
     FileAdapter _api
 )
 {
     public static void Map(WebApplication app)
         => app
-        .MapGet("/api/v1/files{id}", HandleAsync);
+        .MapDelete("/api/v1/files/{id:int}", HandleAsync);
 
     private async static Task<IResult> HandleAsync(
-        [FromServices] FilesGetEndpoint instance,
+        [FromServices] FileDeleteEndpoint instance,
         [FromRoute] int id)
     {
-        var stream = instance._api.GetFile(id);
+        await instance._api.DeleteFile(id);
 
-        return stream is not null ? Results.Ok(stream) : Results.NotFound();
+        return Results.Ok();
     }
 
     //private Task<Stream> GetFile(int id)
