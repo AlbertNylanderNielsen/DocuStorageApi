@@ -1,8 +1,13 @@
-﻿namespace DocuStorageApi.Shared;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DocuStorageApi.Shared;
 
 public class Boat
 {
+    [Key]
     public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public List<FileReference> AllFiles { get; set; } = new();
+
+    public string Name { get; set; } 
+
+    public virtual ICollection<FileReference> Files { get; set; } = new List<FileReference>();
 }

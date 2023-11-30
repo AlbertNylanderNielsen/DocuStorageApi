@@ -1,4 +1,5 @@
 ﻿using DocuStorageApi.Shared;
+using DocuStorageApi.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DocuStorageApi.Server.Endpoints;
@@ -12,15 +13,12 @@ internal record FileDeleteEndpoint
         => app
         .MapDelete("/api/v1/files/{id:int}", HandleAsync);
 
-    private async static Task<IResult> HandleAsync(
+    private async static Task<BoatDtoV1?> HandleAsync(
         [FromServices] FileDeleteEndpoint instance,
         [FromRoute] int id)
     {
-        await instance._api.DeleteFile(id);
-
-        return Results.Ok();
+        var result = await instance._api.DeleteFile(id);
+        return result;
     }
 
-    //private Task<Stream> GetFile(int id)
-    //    => this._api.GetFile(id);
 }

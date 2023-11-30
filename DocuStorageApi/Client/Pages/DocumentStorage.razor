@@ -1,117 +1,56 @@
 ﻿@page "/storage"
+@using DocuStorageApi.Shared.DTOs
 @using MudBlazor;
 @using DocuStorageApi.Shared;
+@using Mapster;
+@using Microsoft.AspNetCore.Components.Web;
+@using System.Text.Json
 
-<h3>Document Storage</h3>
+@if (dto is not null)
+{
+    <h3>Document Storage for <i>@dto.Name</i></h3>
 
-<MudFileUpload T="IBrowserFile"  FilesChanged="UploadFiles">
-    <ButtonTemplate>
-        <MudButton Class="mt-4 mr-4" Align=" right" HtmlTag="label"
-                   Variant="Variant.Filled"
-                   StartIcon="@Icons.Material.Filled.CloudUpload"
-                   For="@context">
-            Upload Files
-        </MudButton>
-    </ButtonTemplate>
-</MudFileUpload>
+    <MudContainer MaxWidth="MaxWidth.Small">
+        <MudSelect Label="Tenants" class="mt-4" T="string" Variant="Variant.Outlined">
+            <MudSelectItem Value="@("Albert")" />
+            <MudSelectItem Value="@("Ray")" />
+        </MudSelect>
 
-<MudDataGrid Items="@files">
-    <Columns>
-        <PropertyColumn Property="x => x.Id" Title="Id" Format="0" />
-        <PropertyColumn Property="x => x.Name" />
-        <TemplateColumn Title=“Path”> 
-			<CellTemplate>
-                <MudLink Style="color: var(--mud-palette-text-primary)!important" OnClick="@(() => DownloadFile(context.Item))">@context.Item.Path</MudLink>
-            </CellTemplate> 
-		</TemplateColumn>
-        <PropertyColumn Property="x => x.SizeBytes" Title="Size in Bytes" Format="0.0" />
-        <TemplateColumn >@* CellClass="d-flex justify-end" *@
-            <CellTemplate>
-                @* <MudStack Row> *@
-                    <MudIconButton Size="Size.Small"
-                                   OnClick="() => DeleteFile(context.Item.Id)"
-                                   Icon="@Icons.Material.Outlined.Delete"
-                                   Variant="Variant.Filled" />
-                @* </MudStack> *@
-            </CellTemplate>
-        </TemplateColumn>
-    </Columns>
-</MudDataGrid> 
+        <MudFileUpload T="IBrowserFile"  FilesChanged="UploadFiles">
+            <ButtonTemplate>
+                <MudButton Class="mt-4 mr-4 mb-4" HtmlTag="label"
+                           Variant="Variant.Filled"
+                           StartIcon="@Icons.Material.Filled.CloudUpload"
+                           For="@context">
+                    Upload Files
+                </MudButton>
+            </ButtonTemplate>
+        </MudFileUpload>
+     </MudContainer>
 
 
-<script>
-    window.triggerFileDownload = (fileName, url) => {
-        const anchorElement = document.createElement('a');
-        anchorElement.href = url;
-        anchorElement.download = fileName ?? '';
-        anchorElement.click();
-        anchorElement.remove();
-    }
-
-    window.downloadFileFromStream = async (fileName, contentStreamReference) => {
-        const arrayBuffer = await contentStreamReference.arrayBuffer();
-        const blob = new Blob([arrayBuffer]);
-        const url = URL.createObjectURL(blob);
-        const anchorElement = document.createElement('a');
-        anchorElement.href = url;
-        anchorElement.download = fileName ?? '';
-        anchorElement.click();
-        anchorElement.remove();
-        URL.revokeObjectURL(url);
-    }
-</script>
-
-@code {
-
-    [Inject]
-    public HttpClient Http { get; set; } = null!;
-
-    [Inject]
-    public IJSRuntime JS { get; set; } = null;
-
-    private List<FileReference> files;
-
-    protected override async Task OnInitializedAsync()
-    {
-        files = await GetAllFiles();
-    }
-
-    private async Task<List<FileReference>> GetAllFiles()
-    {
-        var allfiles = await Http.GetFromJsonAsync<FileReference[]>("/api/v1/files");
-        return allfiles!.ToList();
-    }
-   
-    private async Task DeleteFile(int id)
-    {
-
-        await Http.DeleteAsync($"/api/v1/files/{id}");
-
-        files.Remove(files.First(x => x.Id == id)); 
-    }   
-
-    private async Task DownloadFile(FileReference fileReference)
-    {
-        var fileName = fileReference.Name;
-        var fileURL = $"/api/v1/files/{fileReference.Id}";
-        await JS.InvokeVoidAsync("triggerFileDownload", fileName, fileURL);
-    }
-
-    const long KiloByte = 1024;
-    const long MegaByte = KiloByte * KiloByte;
-    const long MaxAllowedSize = 10 * MegaByte;
-
-    private async Task UploadFiles(IBrowserFile file)
-    {
-
-        using var content = new MultipartFormDataContent();
-        using var fileStream = file.OpenReadStream(MaxAllowedSize);
-        using var streamContent = new StreamContent(fileStream);
-        content.Add(streamContent, "file", file.Name);
-        using var response = await Http.PostAsync("/api/v1/files", content);
-
-       files = await GetAllFiles();
-
-    }
+    <MudDataGrid Items="@dto.Files">
+        <Columns>
+            <PropertyColumn Property="x => x.Id" Title="Id" Format="0" />
+                <PropertyColumn Property="x => x.Name" />
+            <TemplateColumn Title="Path"> 
+			    <CellTemplate>
+                    <MudLink Style="color: var(--mud-palette-text-primary)!important" OnClick="@(() => DownloadFile(context.Item))">@context.Item.Path</MudLink>
+                </CellTemplate> 
+		    </TemplateColumn>
+            <PropertyColumn Property="x => x.SizeBytes" Title="Size in Bytes" Format="0.0" />
+            <TemplateColumn>
+                <CellTemplate>
+                        <MudIconButton Size="Size.Small"
+                                        OnClick="() => DeleteFile(context.Item.Id)"
+                                        Icon="@Icons.Material.Outlined.Delete"
+                                        Variant="Variant.Filled" />
+                </CellTemplate>
+            </TemplateColumn>  
+        </Columns>
+    </MudDataGrid>
 }
+
+
+
 

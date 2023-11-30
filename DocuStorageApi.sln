@@ -3,11 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocuStorageApi.Server", "DocuStorageApi\Server\DocuStorageApi.Server.csproj", "{9E99C456-27CD-4632-AD5E-CB10B2DED2BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocuStorageApi.Server", "DocuStorageApi\Server\DocuStorageApi.Server.csproj", "{9E99C456-27CD-4632-AD5E-CB10B2DED2BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocuStorageApi.Client", "DocuStorageApi\Client\DocuStorageApi.Client.csproj", "{13B7EC8E-0094-4F1A-B1F4-051E41D94E17}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocuStorageApi.Client", "DocuStorageApi\Client\DocuStorageApi.Client.csproj", "{13B7EC8E-0094-4F1A-B1F4-051E41D94E17}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocuStorageApi.Shared", "DocuStorageApi\Shared\DocuStorageApi.Shared.csproj", "{3640CE70-E5E0-4848-9165-017F89B284F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocuStorageApi.Shared", "DocuStorageApi\Shared\DocuStorageApi.Shared.csproj", "{3640CE70-E5E0-4848-9165-017F89B284F0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{F26EB4A6-917D-494E-A847-6471A910EF56}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{E22BCBD1-6A17-414A-A765-A0E3A0AFD4D7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{D6C89B01-7F8C-4C6D-B89E-19E8CF4EA373}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocuStorageApi.EndpointsTest", "EndpointsTest\DocuStorageApi.EndpointsTest.csproj", "{36BF30C7-4EF8-46F6-89D9-325504D8A869}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,9 +35,19 @@ Global
 		{3640CE70-E5E0-4848-9165-017F89B284F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3640CE70-E5E0-4848-9165-017F89B284F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3640CE70-E5E0-4848-9165-017F89B284F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36BF30C7-4EF8-46F6-89D9-325504D8A869}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36BF30C7-4EF8-46F6-89D9-325504D8A869}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36BF30C7-4EF8-46F6-89D9-325504D8A869}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36BF30C7-4EF8-46F6-89D9-325504D8A869}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9E99C456-27CD-4632-AD5E-CB10B2DED2BB} = {E22BCBD1-6A17-414A-A765-A0E3A0AFD4D7}
+		{13B7EC8E-0094-4F1A-B1F4-051E41D94E17} = {F26EB4A6-917D-494E-A847-6471A910EF56}
+		{3640CE70-E5E0-4848-9165-017F89B284F0} = {D6C89B01-7F8C-4C6D-B89E-19E8CF4EA373}
+		{36BF30C7-4EF8-46F6-89D9-325504D8A869} = {E22BCBD1-6A17-414A-A765-A0E3A0AFD4D7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E4DBDC4A-30BF-4437-84FE-065498F042C0}

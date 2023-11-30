@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace DocuStorageApi.Shared;
+﻿namespace DocuStorageApi.Shared.DTOs;
 
 public class FileDtoV1
 {
-    [Key]
     public int Id { get; set; }
     public string Name { get; set; }
     public string Path { get; set; }
