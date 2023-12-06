@@ -7,11 +7,11 @@ using System.Text.Json.Serialization;
 
 namespace DocuStorageApi.Server.Data;
 
-public class DBContext : DbContext
+public class FocusDbContext : DbContext
 {
     private string _path = @"D:\InFocusTest\FileStorageDB\fileshare.db";
 
-    public DBContext(DbContextOptions<DBContext> options) : base(options)
+    public FocusDbContext(DbContextOptions<FocusDbContext> options) : base(options)
     {
         this.Database.EnsureCreated();
     }

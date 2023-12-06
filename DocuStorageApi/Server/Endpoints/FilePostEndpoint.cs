@@ -9,7 +9,7 @@ namespace DocuStorageApi.Server.Endpoints;
 
 internal record FilePostEndpoint
 (
-    DBContext _dB,
+    FocusDbContext _dB,
     FileAdapter _api
 )
 {

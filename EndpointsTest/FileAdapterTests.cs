@@ -1,34 +1,26 @@
 using DocuStorageApi.Server.Data;
 using DocuStorageApi.Server.Endpoints;
-using DocuStorageApi.Shared;
 using DocuStorageApi.Shared.DTOs;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Moq;
 
 public class FileAdapterTests 
 {
 
-    public FileAdapter GetFileAdapter()
-    {
-        var options = new DbContextOptionsBuilder<DBContext>()
-            .UseInMemoryDatabase(databaseName: "Test_DocumentStorage") // Use a unique name for each test
-            .Options;
+ 
 
-        var _context = new DBContext(options);
-
-        return new FileAdapter(_context);
-
-    }
+    public static FocusDbContext GetDbContext() 
+        => new(new DbContextOptionsBuilder<FocusDbContext>()
+                .UseInMemoryDatabase(databaseName: "Test_DocumentStorage")
+                .Options);
 
     [Fact]
     public async Task GetBoat_Test()
     {
         // Arrange
         var id = 1;
-        var _fileAdapter = GetFileAdapter();
+        var _context = GetDbContext();
+        var _fileAdapter = new FileAdapter(_context);
 
         // Act
         BoatDtoV1? dto = await _fileAdapter.GetAsync(id);
@@ -43,7 +35,8 @@ public class FileAdapterTests
     public async Task PostFile_Test()
     {
         // Arrange
-        var _fileAdapter = GetFileAdapter();
+        var _context = GetDbContext();
+        var _fileAdapter = new FileAdapter(_context);
         var initialRecordCount = _fileAdapter._context.Files.Count();
         IFormFile file = new FormFile(new MemoryStream(), 0, 924, "Data", "test.txt");
 
@@ -60,7 +53,8 @@ public class FileAdapterTests
     public async Task DeleteFile_Test()
     {
         // Arrange
-        var _fileAdapter = GetFileAdapter();
+        var _context = GetDbContext();
+        var _fileAdapter = new FileAdapter(_context);
         var lastId = _fileAdapter._context.Files.Last().Id;
 
         // Act
@@ -70,4 +64,37 @@ public class FileAdapterTests
         Assert.NotNull(dto);
         Assert.Equal(lastId - 1, _fileAdapter._context.Files.Count());
     }
+
+    //[Fact]
+    //public async Task DeleteFile_Test_one()
+    //{
+    //    // Arrange
+    //    var dbContext = GetDbContext();
+    //    var fileAdapter = new FileAdapter(dbContext);
+    //    var lastId = dbContext.Files.Last().Id;
+
+    //    // Act
+    //    await fileAdapter.DeleteFile(lastId);
+
+    //    // Assert
+    //    var exists = await dbContext.Files.AnyAsync(x => x.Id == lastId);
+    //    Assert.False(exists);
+    //}
+
+    //[Fact]
+    //public async Task DeleteFile_Test_two()
+    //{
+    //    // Arrange
+    //    var _fileAdapter = GetFileAdapter();
+    //    var lastId = _fileAdapter._context.Files.Last().Id;
+
+    //    // Act
+    //    await _fileAdapter.DeleteFile(lastId);
+
+    //    // Assert
+    //    var dto = await _fileAdapter.GetAsync(1);
+    //    var exists = dto.Files.Any(x => x.Id == lastId);
+    //    Assert.False(exists);
+    //}
+
 }

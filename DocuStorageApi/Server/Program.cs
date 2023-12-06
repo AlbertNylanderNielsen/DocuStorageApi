@@ -10,7 +10,7 @@ builder.Services.AddSwaggerGen();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddDbContext<DBContext>(options =>
+builder.Services.AddDbContext<FocusDbContext>(options =>
     options.UseInMemoryDatabase("DocumentStorage"));
 //builder.Services.AddScoped<DBContext>();
 builder.Services.AddScoped<FileAdapter>();

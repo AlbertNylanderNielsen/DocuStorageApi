@@ -10,7 +10,7 @@ namespace DocuStorageApi.Server.Endpoints;
 
 public record FileAdapter
 (
-    DBContext _context
+    FocusDbContext _context
 )
 {
 
